@@ -1,26 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthContextProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ActiveConversations } from "./components/ActiveConversations";
+import { NotificationContextProvider } from "./contexts/NotificationContext";
+import { Chat } from "./components/Chat";
+import { Login } from "./components/Login";
+import { Navbar } from "./components/Navbar";
+import { Conversations } from "./components/Conversations";
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <AuthContextProvider>
+              <NotificationContextProvider>
+                <Navbar />
+              </NotificationContextProvider>
+            </AuthContextProvider>
+          }
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Route
+            path=""
+            element={
+              <ProtectedRoute>
+                <Conversations />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="login" element={<Login />} />
+          <Route
+            path="chats/:conversationName"
+            element={
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="conversations/"
+            element={
+              <ProtectedRoute>
+                <ActiveConversations />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
